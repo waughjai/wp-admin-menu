@@ -102,7 +102,7 @@ namespace WaughJ\WPAdminMenu
 			// 'specially useful for people relying on screen readers.
 			private function printSkipToContentItem( string $item_key, string $link_key ) : void
 			{
-				$anchor = $this->skip_to_content_anchor->getAnchor();
+				$anchor = $this->skip_to_content_anchor->GetAnchor();
 				if ( $anchor !== null )
 				{
 					$item_classes_list = array_merge( [ 'skip-content-item' ], $this->getElementAttribute( $item_key, 'class' ) );
@@ -183,37 +183,5 @@ namespace WaughJ\WPAdminMenu
 			private $slug;
 			private $title;
 			private $attributes;
-	}
-
-	class SkipToContentAnchor
-	{
-		public function __construct( $anchor )
-		{
-			if ( is_string( $anchor ) )
-			{
-				$this->anchor = $anchor;
-			}
-			else if ( is_numeric( $anchor ) )
-			{
-				$this->anchor = ( string )( $anchor );
-			}
-			else if ( is_bool( $anchor ) )
-			{
-				$this->anchor = self::DEFAULT_ANCHOR;
-			}
-			else
-			{
-				$this->anchor = null;
-			}
-		}
-
-		public function getAnchor()
-		{
-			return $this->anchor;
-		}
-
-		private $anchor;
-		private $post_converter;
-		private const DEFAULT_ANCHOR = 'main';
 	}
 }

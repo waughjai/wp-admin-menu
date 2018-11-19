@@ -32,6 +32,6 @@ namespace WaughJ\WPAdminMenu
 
 		private $anchor;
 		private $post_converter;
-		private const DEFAULT_ANCHOR = 'main';
+		const DEFAULT_ANCHOR = 'main';
 	}
 }

@@ -23,7 +23,7 @@ namespace WaughJ\WPAdminMenu
 				$this->post_converter = new WPPostListConverter([ 'type' => 'menu' ]);
 				$function = function() use ( $slug, $title )
 				{
-					register_nav_menu( $this->slug, __( $this->title, 'northwest' ) );
+					register_nav_menu( $this->slug, __( $this->title, $this->getThemeName() ) );
 				};
 				add_action( 'after_setup_theme', $function );
 			}
@@ -178,6 +178,20 @@ namespace WaughJ\WPAdminMenu
 			private function testMenuItemHasChildren( array $menu_item ) : bool
 			{
 				return isset( $menu_item[ 'subnav' ] );
+			}
+
+			private function getThemeName() : string
+			{
+				$theme = wp_get_theme();
+				if ( is_a( $theme, '\WP_Theme' ) && $theme->exists() )
+				{
+					$name = $theme->get( 'TextDomain' );
+					if ( is_string( $name ) )
+					{
+						return $name;
+					}
+				}
+				return 'waugh';
 			}
 
 			private $slug;

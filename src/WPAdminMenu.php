@@ -28,10 +28,10 @@ namespace WaughJ\WPAdminMenu
 				add_action( 'after_setup_theme', $function );
 			}
 
-			public function PrintMenu() : void
+			public function printMenu() : void
 			{
 				$menu_data = $this->GetMenu();
-				$this->PrintMenuNav( $menu_data );
+				$this->printMenuNav( $menu_data );
 			}
 
 			public function getMenuContent() : string
@@ -41,9 +41,9 @@ namespace WaughJ\WPAdminMenu
 				return ob_get_clean();
 			}
 
-			public function GetMenu() : array
+			public function getMenu() : array
 			{
-				return $this->post_converter->GetConvertedList( $this->GetWordPressMenuData() );
+				return $this->post_converter->getConvertedList( $this->getWordPressMenuData() );
 			}
 
 
@@ -54,45 +54,45 @@ namespace WaughJ\WPAdminMenu
 		//
 		/////////////////////////////////////////////////////////
 
-			private function PrintMenuNav( array $menu_data ) : void
+			private function printMenuNav( array $menu_data ) : void
 			{
-				?><nav<?= $this->GetElementClassValue( 'nav' ); ?><?= $this->GetElementIDValue( 'nav' ); ?>><?php
-					$this->PrintMenuList( $menu_data );
+				?><nav<?= $this->getElementClassValue( 'nav' ); ?><?= $this->getElementIDValue( 'nav' ); ?>><?php
+					$this->printMenuList( $menu_data );
 				?></nav><?php
 			}
 
-			private function PrintMenuList( array $menu_list, string $list_key = 'ul', string $item_key = 'li', string $link_key = 'a', bool $is_topmost = true ) : void
+			private function printMenuList( array $menu_list, string $list_key = 'ul', string $item_key = 'li', string $link_key = 'a', bool $is_topmost = true ) : void
 			{
-				?><ul<?= $this->GetElementClassValue( $list_key ); ?><?= $this->GetElementIDValue( $list_key ); ?>><?php
+				?><ul<?= $this->getElementClassValue( $list_key ); ?><?= $this->getElementIDValue( $list_key ); ?>><?php
 					if ( $is_topmost )
 					{
-						$this->PrintSkipToContentItem( $item_key, $link_key );
+						$this->printSkipToContentItem( $item_key, $link_key );
 					}
 
 					foreach ( $menu_list as $menu_item )
 					{
-						$this->PrintMenuItem( $menu_item, $item_key, $link_key );
+						$this->printMenuItem( $menu_item, $item_key, $link_key );
 					}
 				?></ul><?php
 			}
 
-			private function PrintMenuItem( array $menu_item, string $item_key, string $link_key ) : void
+			private function printMenuItem( array $menu_item, string $item_key, string $link_key ) : void
 			{
-				?><li<?= $this->GetElementClassValue( $item_key ); ?>><?php
-					$this->PrintMenuLink( $menu_item, $link_key );
-					if ( $this->TestMenuItemHasChildren( $menu_item ) )
+				?><li<?= $this->getElementClassValue( $item_key ); ?>><?php
+					$this->printMenuLink( $menu_item, $link_key );
+					if ( $this->testMenuItemHasChildren( $menu_item ) )
 					{
-						$this->PrintMenuList( $menu_item[ 'subnav' ], 'sublist', 'subitem', 'sublink', false );
+						$this->printMenuList( $menu_item[ 'subnav' ], 'sublist', 'subitem', 'sublink', false );
 					}
 				?></li><?php
 			}
 
-			private function PrintMenuLink( array $menu_item, string $link_key ) : void
+			private function printMenuLink( array $menu_item, string $link_key ) : void
 			{
-				$classes = $this->GetElementAttribute( $link_key, 'class' );
-				if ( $this->TestMenuItemHasChildren( $menu_item ) )
+				$classes = $this->getElementAttribute( $link_key, 'class' );
+				if ( $this->testMenuItemHasChildren( $menu_item ) )
 				{
-					$classes = array_merge( $classes, $this->GetElementAttribute( 'link-parent', 'class' ) );
+					$classes = array_merge( $classes, $this->getElementAttribute( 'link-parent', 'class' ) );
 				}
 				$class_string = implode( ' ', $classes );
 				echo new HTMLLink( $menu_item[ 'url' ], $menu_item[ 'title' ], [ 'class' => $class_string ]);
@@ -100,20 +100,20 @@ namespace WaughJ\WPAdminMenu
 
 			// Skip to Content Item holds a link that goes to the main content anchor,
 			// 'specially useful for people relying on screen readers.
-			private function PrintSkipToContentItem( string $item_key, string $link_key ) : void
+			private function printSkipToContentItem( string $item_key, string $link_key ) : void
 			{
-				$anchor = $this->skip_to_content_anchor->GetAnchor();
+				$anchor = $this->skip_to_content_anchor->getAnchor();
 				if ( $anchor !== null )
 				{
-					$item_classes_list = array_merge( [ 'skip-content-item' ], $this->GetElementAttribute( $item_key, 'class' ) );
+					$item_classes_list = array_merge( [ 'skip-content-item' ], $this->getElementAttribute( $item_key, 'class' ) );
 					$item_classes_string = implode( ' ', $item_classes_list );
 					?><li class="<?= $item_classes_string; ?>"><?php
-						echo new HTMLLink( '#main', 'Skip to Content', [ 'class' => $this->GetElementAttributeString( $link_key, 'class' ) . ' skip-content-link' ]);
+						echo new HTMLLink( '#main', 'Skip to Content', [ 'class' => $this->getElementAttributeString( $link_key, 'class' ) . ' skip-content-link' ]);
 					?></li><?php
 				}
 			}
 
-			private function GetWordPressMenuData() : array
+			private function getWordPressMenuData() : array
 			{
 			    // Get all locations
 			    $locations = get_nav_menu_locations();
@@ -125,19 +125,19 @@ namespace WaughJ\WPAdminMenu
 			    return $menu_items;
 			}
 
-			private function GetElementClassValue( string $element ) : string
+			private function getElementClassValue( string $element ) : string
 			{
-				return $this->GetElementAttributeValue( $element, 'class' );
+				return $this->getElementAttributeValue( $element, 'class' );
 			}
 
-			private function GetElementIDValue( string $element ) : string
+			private function getElementIDValue( string $element ) : string
 			{
-				return $this->GetElementAttributeValue( $element, 'id' );
+				return $this->getElementAttributeValue( $element, 'id' );
 			}
 
-			private function GetElementAttributeValue( string $element, string $attribute ) : string
+			private function getElementAttributeValue( string $element, string $attribute ) : string
 			{
-				$attribute_value = $this->GetElementAttributeString( $element, $attribute );
+				$attribute_value = $this->getElementAttributeString( $element, $attribute );
 				$text = '';
 				if ( $attribute_value !== '' )
 				{
@@ -146,12 +146,12 @@ namespace WaughJ\WPAdminMenu
 				return $text;
 			}
 
-			private function GetElementAttributeString( string $element, string $attribute ) : string
+			private function getElementAttributeString( string $element, string $attribute ) : string
 			{
-				return implode( ' ', $this->GetElementAttribute( $element, $attribute ) );
+				return implode( ' ', $this->getElementAttribute( $element, $attribute ) );
 			}
 
-			private function GetElementAttribute( string $element, string $attribute ) : array
+			private function getElementAttribute( string $element, string $attribute ) : array
 			{
 				$object = TestHashItemExists( $this->attributes, $element, [] );
 				if ( !empty( $object ) )
@@ -175,7 +175,7 @@ namespace WaughJ\WPAdminMenu
 				return [];
 			}
 
-			private function TestMenuItemHasChildren( array $menu_item ) : bool
+			private function testMenuItemHasChildren( array $menu_item ) : bool
 			{
 				return isset( $menu_item[ 'subnav' ] );
 			}
@@ -207,7 +207,7 @@ namespace WaughJ\WPAdminMenu
 			}
 		}
 
-		public function GetAnchor()
+		public function getAnchor()
 		{
 			return $this->anchor;
 		}

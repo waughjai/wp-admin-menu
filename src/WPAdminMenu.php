@@ -5,6 +5,7 @@ namespace WaughJ\WPAdminMenu
 {
 	use WaughJ\WPPostListConverter\WPPostListConverter;
 	use WaughJ\HTMLLink\HTMLLink;
+	use function WaughJ\TestHashItem\TestHashItemArray;
 	use function WaughJ\TestHashItem\TestHashItemExists;
 
 	class WPAdminMenu
@@ -158,18 +159,19 @@ namespace WaughJ\WPAdminMenu
 
 			private function getElementAttribute( string $element, string $attribute ) : array
 			{
-				$object = TestHashItemExists( $this->attributes, $element, [] );
-				if ( !empty( $object ) )
+				$element_attributes = TestHashItemArray( $this->attributes, $element, [] );
+				$attribute_values = TestHashItemExists( $element_attributes, $attribute, null );
+				if ( $attribute_values !== null )
 				{
-					if ( is_string( $object ) )
+					if ( is_string( $attribute_values ) )
 					{
-						return [ $object ];
+						return [ $attribute_values ];
 					}
-					else if ( is_array( $object ) )
+					else if ( is_array( $attribute_values ) )
 					{
 						// Ensure array is indexed, not associative / hash map.
 						$flat_array = [];
-						foreach ( $object as $item )
+						foreach ( $attribute_values as $item )
 						{
 							array_push( $flat_array, $item );
 						}

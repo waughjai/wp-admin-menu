@@ -15,7 +15,7 @@ namespace WaughJ\WPAdminMenu
 		//
 		/////////////////////////////////////////////////////////
 
-			public function __construct( string $slug, string $title, array $attributes )
+			public function __construct( string $slug, string $title, array $attributes = [] )
 			{
 				$this->slug = $slug;
 				$this->title = $title;
@@ -102,7 +102,9 @@ namespace WaughJ\WPAdminMenu
 					$classes = array_merge( $classes, $this->getElementAttribute( 'link-parent', 'class', $attributes_list ) );
 				}
 				$class_string = implode( ' ', $classes );
-				echo new HTMLLink( $menu_item[ 'url' ], $menu_item[ 'title' ], [ 'class' => $class_string ]);
+				// Only add class attribute if there are any classes.
+				$other_attributes = ( $class_string === '' ) ? [] : [ 'class' => $class_string ];
+				echo new HTMLLink( $menu_item[ 'url' ], $menu_item[ 'title' ], $other_attributes );
 			}
 
 			// Skip to Content Item holds a link that goes to the main content anchor,

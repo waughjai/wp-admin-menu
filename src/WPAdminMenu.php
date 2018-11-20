@@ -34,16 +34,17 @@ namespace WaughJ\WPAdminMenu
 				return $this->getMenuContent();
 			}
 
-			public function printMenu() : void
+			public function printMenu( $custom_attributes = null ) : void
 			{
+				$attributes_list = $this->addCustomAttributesToDefaultAttributes( $custom_attributes );
 				$menu_data = $this->GetMenu();
-				$this->printMenuNav( $menu_data );
+				$this->printMenuNav( $menu_data, $attributes_list );
 			}
 
-			public function getMenuContent() : string
+			public function getMenuContent( $custom_attributes = null ) : string
 			{
 				ob_start();
-				$this->printMenu();
+				$this->printMenu( $custom_attributes );
 				return ob_get_clean();
 			}
 
@@ -60,45 +61,45 @@ namespace WaughJ\WPAdminMenu
 		//
 		/////////////////////////////////////////////////////////
 
-			private function printMenuNav( array $menu_data ) : void
+			private function printMenuNav( array $menu_data, array $attributes_list ) : void
 			{
-				?><nav<?= $this->getElementClassValue( 'nav' ); ?><?= $this->getElementIDValue( 'nav' ); ?>><?php
-					$this->printMenuList( $menu_data );
+				?><nav<?= $this->getElementClassValue( 'nav', $attributes_list ); ?><?= $this->getElementIDValue( 'nav', $attributes_list ); ?>><?php
+					$this->printMenuList( $menu_data, $attributes_list );
 				?></nav><?php
 			}
 
-			private function printMenuList( array $menu_list, string $list_key = 'ul', string $item_key = 'li', string $link_key = 'a', bool $is_topmost = true ) : void
+			private function printMenuList( array $menu_list, array $attributes_list, string $list_key = 'ul', string $item_key = 'li', string $link_key = 'a', bool $is_topmost = true ) : void
 			{
-				?><ul<?= $this->getElementClassValue( $list_key ); ?><?= $this->getElementIDValue( $list_key ); ?>><?php
+				?><ul<?= $this->getElementClassValue( $list_key, $attributes_list ); ?><?= $this->getElementIDValue( $list_key, $attributes_list ); ?>><?php
 					if ( $is_topmost )
 					{
-						$this->printSkipToContentItem( $item_key, $link_key );
+						$this->printSkipToContentItem( $item_key, $link_key, $attributes_list );
 					}
 
 					foreach ( $menu_list as $menu_item )
 					{
-						$this->printMenuItem( $menu_item, $item_key, $link_key );
+						$this->printMenuItem( $menu_item, $item_key, $link_key, $attributes_list );
 					}
 				?></ul><?php
 			}
 
-			private function printMenuItem( array $menu_item, string $item_key, string $link_key ) : void
+			private function printMenuItem( array $menu_item, string $item_key, string $link_key, array $attributes_list ) : void
 			{
-				?><li<?= $this->getElementClassValue( $item_key ); ?>><?php
-					$this->printMenuLink( $menu_item, $link_key );
+				?><li<?= $this->getElementClassValue( $item_key, $attributes_list ); ?>><?php
+					$this->printMenuLink( $menu_item, $link_key, $attributes_list );
 					if ( $this->testMenuItemHasChildren( $menu_item ) )
 					{
-						$this->printMenuList( $menu_item[ 'subnav' ], 'sublist', 'subitem', 'sublink', false );
+						$this->printMenuList( $menu_item[ 'subnav' ], $attributes_list, 'sublist', 'subitem', 'sublink', false );
 					}
 				?></li><?php
 			}
 
-			private function printMenuLink( array $menu_item, string $link_key ) : void
+			private function printMenuLink( array $menu_item, string $link_key, array $attributes_list ) : void
 			{
-				$classes = $this->getElementAttribute( $link_key, 'class' );
+				$classes = $this->getElementAttribute( $link_key, 'class', $attributes_list );
 				if ( $this->testMenuItemHasChildren( $menu_item ) )
 				{
-					$classes = array_merge( $classes, $this->getElementAttribute( 'link-parent', 'class' ) );
+					$classes = array_merge( $classes, $this->getElementAttribute( 'link-parent', 'class', $attributes_list ) );
 				}
 				$class_string = implode( ' ', $classes );
 				echo new HTMLLink( $menu_item[ 'url' ], $menu_item[ 'title' ], [ 'class' => $class_string ]);
@@ -106,15 +107,15 @@ namespace WaughJ\WPAdminMenu
 
 			// Skip to Content Item holds a link that goes to the main content anchor,
 			// 'specially useful for people relying on screen readers.
-			private function printSkipToContentItem( string $item_key, string $link_key ) : void
+			private function printSkipToContentItem( string $item_key, string $link_key, array $attributes_list ) : void
 			{
 				$anchor = $this->skip_to_content_anchor->GetAnchor();
 				if ( $anchor !== null )
 				{
-					$item_classes_list = array_merge( [ 'skip-content-item' ], $this->getElementAttribute( $item_key, 'class' ) );
+					$item_classes_list = array_merge( [ 'skip-content-item' ], $this->getElementAttribute( $item_key, 'class', $attributes_list ) );
 					$item_classes_string = implode( ' ', $item_classes_list );
 					?><li class="<?= $item_classes_string; ?>"><?php
-						echo new HTMLLink( '#main', 'Skip to Content', [ 'class' => $this->getElementAttributeString( $link_key, 'class' ) . ' skip-content-link' ]);
+						echo new HTMLLink( '#main', 'Skip to Content', [ 'class' => $this->getElementAttributeString( $link_key, 'class', $attributes_list ) . ' skip-content-link' ]);
 					?></li><?php
 				}
 			}
@@ -131,19 +132,19 @@ namespace WaughJ\WPAdminMenu
 			    return $menu_items;
 			}
 
-			private function getElementClassValue( string $element ) : string
+			private function getElementClassValue( string $element, array $attributes_list ) : string
 			{
-				return $this->getElementAttributeValue( $element, 'class' );
+				return $this->getElementAttributeValue( $element, 'class', $attributes_list );
 			}
 
-			private function getElementIDValue( string $element ) : string
+			private function getElementIDValue( string $element, array $attributes_list ) : string
 			{
-				return $this->getElementAttributeValue( $element, 'id' );
+				return $this->getElementAttributeValue( $element, 'id', $attributes_list );
 			}
 
-			private function getElementAttributeValue( string $element, string $attribute ) : string
+			private function getElementAttributeValue( string $element, string $attribute, array $attributes_list ) : string
 			{
-				$attribute_value = $this->getElementAttributeString( $element, $attribute );
+				$attribute_value = $this->getElementAttributeString( $element, $attribute, $attributes_list );
 				$text = '';
 				if ( $attribute_value !== '' )
 				{
@@ -152,14 +153,14 @@ namespace WaughJ\WPAdminMenu
 				return $text;
 			}
 
-			private function getElementAttributeString( string $element, string $attribute ) : string
+			private function getElementAttributeString( string $element, string $attribute, array $attributes_list ) : string
 			{
-				return implode( ' ', $this->getElementAttribute( $element, $attribute ) );
+				return implode( ' ', $this->getElementAttribute( $element, $attribute, $attributes_list ) );
 			}
 
-			private function getElementAttribute( string $element, string $attribute ) : array
+			private function getElementAttribute( string $element, string $attribute, array $attributes_list ) : array
 			{
-				$element_attributes = TestHashItemArray( $this->attributes, $element, [] );
+				$element_attributes = TestHashItemArray( $attributes_list, $element, [] );
 				$attribute_values = TestHashItemExists( $element_attributes, $attribute, null );
 				if ( $attribute_values !== null )
 				{
@@ -199,6 +200,36 @@ namespace WaughJ\WPAdminMenu
 					}
 				}
 				return 'waugh';
+			}
+
+			private function addCustomAttributesToDefaultAttributes( $custom_attributes ) : array
+			{
+				$attributes_list = $this->attributes;
+				if ( is_array( $custom_attributes ) )
+				{
+					foreach( $custom_attributes as $key => $value )
+					{
+						if ( is_array( $value ) )
+						{
+							if ( !array_key_exists( $key, $attributes_list ) )
+							{
+								$attributes_list[ $key ] = $value;
+							}
+							else
+							{
+								foreach ( $value as $subkey => $subvalue )
+								{
+									$attributes_list[ $key ][ $subkey ] = $subvalue;
+								}
+							}
+						}
+						else
+						{
+							$attributes_list[ $key ] = $value;
+						}
+					}
+				}
+				return $attributes_list;
 			}
 
 			private $slug;

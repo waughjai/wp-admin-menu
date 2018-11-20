@@ -28,6 +28,11 @@ namespace WaughJ\WPAdminMenu
 				add_action( 'after_setup_theme', $function );
 			}
 
+			public function __toString()
+			{
+				return $this->getMenuContent();
+			}
+
 			public function printMenu() : void
 			{
 				$menu_data = $this->GetMenu();

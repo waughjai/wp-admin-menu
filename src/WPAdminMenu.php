@@ -7,6 +7,7 @@ namespace WaughJ\WPAdminMenu
 	use WaughJ\HTMLLink\HTMLLink;
 	use function WaughJ\TestHashItem\TestHashItemArray;
 	use function WaughJ\TestHashItem\TestHashItemExists;
+	use function WaughJ\TestHashItem\TestHashItemIsTrue;
 	use WaughJ\HTMLAttributeList\HTMLAttributeList;
 
 	class WPAdminMenu
@@ -121,7 +122,10 @@ namespace WaughJ\WPAdminMenu
 				$class_string = implode( ' ', $classes );
 				// Only add class attribute if there are any classes.
 				$other_attributes = ( $class_string === '' ) ? [] : [ 'class' => $class_string ];
-				echo new HTMLLink( $menu_item[ 'url' ], $menu_item[ 'title' ], $other_attributes );
+
+				echo ( TestHashItemIsTrue( $attributes_list, 'dont-show-current-link' ) )
+					? $menu_item[ 'title' ]
+					: new HTMLLink( $menu_item[ 'url' ], $menu_item[ 'title' ], $other_attributes );
 			}
 
 			// Skip to Content Item holds a link that goes to the main content anchor,

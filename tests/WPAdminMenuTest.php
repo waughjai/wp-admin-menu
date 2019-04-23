@@ -21,11 +21,13 @@ class WPAdminMenuTest extends TestCase
 
 	public function testAdminContentWithoutLinkForCurrentPage()
 	{
+		$atts = self::ATTRIBUTES;
+		$atts[ 'dont-show-current-link' ] = true;
 		$menu = new WPAdminMenu
 		(
 			'header-nav',
 			'Header Nav',
-			self::ATTRIBUTES
+			$atts
 		);
 		$menu->setCurrentPage( 1 );
 		$this->assertEquals( '<nav class="' . self::ATTRIBUTES[ 'nav' ][ 'class' ] . '" id="' . self::ATTRIBUTES[ 'nav' ][ 'id' ] . '"><ul class="' . self::ATTRIBUTES[ 'ul' ][ 'class' ] . '" id="' . self::ATTRIBUTES[ 'ul' ][ 'id' ] . '"><li class="skip-content-item ' . self::ATTRIBUTES[ 'li' ][ 'class' ] . '"><a class="' . self::ATTRIBUTES[ 'a' ][ 'class' ] . ' skip-content-link" href="#' . self::ATTRIBUTES[ 'skip-to-content' ] . '">Skip to Content</a></li><li class="' . self::ATTRIBUTES[ 'li' ][ 'class' ] . ' ' . self::ATTRIBUTES[ 'current-item' ][ 'class' ] . '">Some Post<ul class="' . self::ATTRIBUTES[ 'sublist' ][ 'class' ] . '"><li class="' . self::ATTRIBUTES[ 'subitem' ][ 'class' ] . '"><a class="' . self::ATTRIBUTES[ 'sublink' ][ 'class' ] . '" href="https://www.jaimeson-waugh.com">Some Post Child</a></li></ul></li></ul></nav>', $menu->getMenuContent() );

@@ -111,20 +111,26 @@ namespace WaughJ\WPAdminMenu
 			private function printMenuLink( array $menu_item, string $link_key, array $attributes_list ) : void
 			{
 				$classes = $this->getElementAttribute( $link_key, 'class', $attributes_list );
+
+				// Add "link-parent" class if parent o' submenu.
 				if ( $this->testMenuItemHasChildren( $menu_item ) )
 				{
 					$classes = array_merge( $classes, $this->getElementAttribute( 'link-parent', 'class', $attributes_list ) );
 				}
+
+				// Add "current-link" class if link goes to current page.
 				if ( $menu_item[ 'id' ] === $this->current_page )
 				{
 					$classes = array_merge( $classes, $this->getElementAttribute( 'current-link', 'class', $attributes_list ) );
 				}
+
 				$class_string = implode( ' ', $classes );
 				// Only add class attribute if there are any classes.
 				$other_attributes = ( $class_string === '' ) ? [] : [ 'class' => $class_string ];
 
-				echo ( TestHashItemIsTrue( $attributes_list, 'dont-show-current-link' ) )
-					? $menu_item[ 'title' ]
+				$dont_show_current_page_link_condition = TestHashItemIsTrue( $attributes_list, 'dont-show-current-link' ) && $this->current_page === $menu_item[ 'id' ];
+				echo ( $dont_show_current_page_link_condition )
+					? $menu_item[ 'title' ] // Title without link
 					: new HTMLLink( $menu_item[ 'url' ], $menu_item[ 'title' ], $other_attributes );
 			}
 

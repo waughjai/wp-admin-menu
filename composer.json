@@ -15,7 +15,7 @@
 		"waughj/test-hash-item": ">=1.0.1",
 		"waughj/html-link": ">=1.2.6",
 		"waughj/wp-post-list-converter": ">=0.1.2",
-		"waughj/wp-admin-menu": "*"
+        "waughj/html-attribute-list": ">=1.2.0"
     },
     "require-dev": {
 		"phpunit/phpunit": "*"

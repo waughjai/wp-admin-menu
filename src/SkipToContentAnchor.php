@@ -1,37 +1,36 @@
 <?php
 
 declare( strict_types = 1 );
-namespace WaughJ\WPAdminMenu
+namespace WaughJ\WPAdminMenu;
+
+class SkipToContentAnchor
 {
-	class SkipToContentAnchor
+	public function __construct( $anchor )
 	{
-		public function __construct( $anchor )
+		if ( is_string( $anchor ) )
 		{
-			if ( is_string( $anchor ) )
-			{
-				$this->anchor = $anchor;
-			}
-			else if ( is_numeric( $anchor ) )
-			{
-				$this->anchor = ( string )( $anchor );
-			}
-			else if ( is_bool( $anchor ) )
-			{
-				$this->anchor = self::DEFAULT_ANCHOR;
-			}
-			else
-			{
-				$this->anchor = null;
-			}
+			$this->anchor = $anchor;
 		}
-
-		public function getAnchor()
+		else if ( is_numeric( $anchor ) )
 		{
-			return $this->anchor;
+			$this->anchor = ( string )( $anchor );
 		}
-
-		private $anchor;
-		private $post_converter;
-		const DEFAULT_ANCHOR = 'main';
+		else if ( is_bool( $anchor ) )
+		{
+			$this->anchor = self::DEFAULT_ANCHOR;
+		}
+		else
+		{
+			$this->anchor = null;
+		}
 	}
+
+	public function getAnchor()
+	{
+		return $this->anchor;
+	}
+
+	private $anchor;
+	private $post_converter;
+	const DEFAULT_ANCHOR = 'main';
 }

@@ -2,7 +2,7 @@
     "name": "waughj/wp-admin-menu",
     "description": "Template for automatically creating link menu based on menu in WordPress's Menu in Appearance.",
     "keywords": [ "wordpress", "admin", "menu", "links", "template" ],
-    "license": "GPL-2.0-or-later",
+    "license": "AGPL-3.0-or-later",
     "authors": [
         {
             "name": "Jaimeson Waugh",
@@ -12,10 +12,9 @@
     "type": "library",
     "require": {
 		"php": ">=7.0",
-		"waughj/test-hash-item": ">=1.0.1",
-		"waughj/html-link": ">=1.2.6",
-		"waughj/wp-post-list-converter": ">=0.1.2",
-		"waughj/wp-admin-menu": "*"
+		"waughj/test-hash-item": ">=2.0.0",
+		"waughj/html-link": ">=1.2.7",
+		"waughj/wp-post-list-converter": ">=0.1.3"
     },
     "require-dev": {
 		"phpunit/phpunit": "*"

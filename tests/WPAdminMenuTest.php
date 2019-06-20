@@ -1,5 +1,9 @@
 <?php
 
+/*
+
+Replaced by better integration testing.
+
 use PHPUnit\Framework\TestCase;
 use WaughJ\WPAdminMenu\WPAdminMenu;
 
@@ -117,3 +121,4 @@ class WPAdminMenuTest extends TestCase
 		'skip-to-content' => 'main'
 	];
 }
+*/

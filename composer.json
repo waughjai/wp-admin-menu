@@ -11,10 +11,10 @@
     ],
     "type": "library",
     "require": {
-		"php": ">=7.0",
+		"php": ">=7.2",
 		"waughj/test-hash-item": ">=2.0.0",
 		"waughj/html-link": ">=1.2.7",
-		"waughj/wp-post-list-converter": ">=0.1.3"
+		"waughj/wp-post-list-converter": ">=0.2.0"
     },
     "require-dev": {
 		"phpunit/phpunit": "*"

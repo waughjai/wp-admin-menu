@@ -22,12 +22,10 @@ class WPAdminMenu
 			$this->attributes = $attributes;
 			$this->skip_to_content_anchor = new SkipToContentAnchor( $attributes[ 'skip-to-content' ] ?? null );
 			$this->post_converter = new WPPostListConverter([ 'type' => 'menu' ]);
+			$this->menu = $this->generateMenu();
 			$this->current_page = null;
-			$function = function() use ( $slug, $title )
-			{
-				register_nav_menu( $this->slug, __( $this->title, $this->getThemeName() ) );
-			};
-			add_action( 'after_setup_theme', $function );
+			$this->setupMenuInAdmin();
+			$this->setCurrentPageBasedOnCurrentPost();
 		}
 
 		public function __toString()
@@ -49,14 +47,33 @@ class WPAdminMenu
 			return ob_get_clean();
 		}
 
-		public function setCurrentPage( int $post_id ) : void
+		public function setCurrentPage( int $menu_id ) : void
 		{
-			$this->current_page = $post_id;
+			$this->current_page = $menu_id;
 		}
 
 		public function getMenu() : array
 		{
-			return $this->post_converter->getConvertedList( $this->getWordPressMenuData() );
+			return $this->menu;
+		}
+
+		public function findMenuItemByObjectID( array $menu, int $object_id ) : ?int
+		{
+			foreach( $menu as $item )
+			{
+				if ( $item[ 'object_id' ] === $object_id )
+				{
+					return $item[ 'id' ];
+				}
+				$id = null;
+				$subnav = TestHashItem::getArray( $item, 'subnav', false );
+				if ( $subnav )
+				{
+					$id = $this->findMenuItemByObjectID( $subnav, $object_id );
+				}
+				if ( $id !== null ) { return $id; }
+			}
+			return null;
 		}
 
 
@@ -259,10 +276,56 @@ class WPAdminMenu
 			return $attributes_list;
 		}
 
+		private function setupMenuInAdmin() : void
+		{
+			add_action
+			(
+				'after_setup_theme',
+				function()
+				{
+					register_nav_menu( $this->slug, __( $this->title, $this->getThemeName() ) );
+				}
+			);
+		}
+
+		private function setCurrentPageBasedOnCurrentPost() : void
+		{
+			add_action
+			(
+				'wp_head',
+				function()
+				{
+					if ( is_category() )
+					{
+						$cat_id = get_queried_object()->cat_ID;
+						$id = $this->findMenuItemByObjectID( $this->getMenu(), intval( $cat_id ) );
+						if ( $id )
+						{
+							$this->current_page = $id;
+						}
+					}
+					else
+					{
+						$id = $this->findMenuItemByObjectID( $this->getMenu(), intval( get_the_ID() ) );
+						if ( $id )
+						{
+							$this->current_page = $id;
+						}
+					}
+				}
+			);
+		}
+
+		private function generateMenu() : array
+		{
+			return $this->post_converter->getConvertedList( $this->getWordPressMenuData() );
+		}
+
 		private $slug;
 		private $title;
 		private $attributes;
 		private $skip_to_content_anchor;
 		private $post_converter;
+		private $menu;
 		private $current_page;
 }

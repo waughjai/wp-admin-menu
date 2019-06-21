@@ -169,6 +169,12 @@ class WPAdminMenu
 		    // Get all locations
 		    $locations = get_nav_menu_locations();
 		    // Get object id by slug
+
+			if ( !array_key_exists( $this->slug, $locations ) )
+			{
+				return [];
+			}
+
 		    $object = wp_get_nav_menu_object( $locations[ $this->slug ] );
 		    // Get menu items by menu name
 		    $menu_items = wp_get_nav_menu_items( $object->name, [] );

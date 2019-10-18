@@ -14,10 +14,10 @@
 		"php": ">=7.2",
 		"waughj/test-hash-item": ">=2.0.0",
 		"waughj/html-link": ">=1.2.7",
-		"waughj/wp-post-list-converter": ">=0.2.0"
+        "waughj/flat-to-hierarchy-sorter": "^0.1.0",
+        "waughj/html-attribute-list": "^1.2"
     },
     "require-dev": {
-		"phpunit/phpunit": "*"
     },
     "autoload": {
         "psr-4": {

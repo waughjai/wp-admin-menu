@@ -25,12 +25,11 @@ class SkipToContentAnchor
 		}
 	}
 
-	public function getAnchor()
+	public function getAnchor() : ?string
 	{
 		return $this->anchor;
 	}
 
 	private $anchor;
-	private $post_converter;
-	const DEFAULT_ANCHOR = 'main';
+	private const DEFAULT_ANCHOR = 'top';
 }

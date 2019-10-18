@@ -3,10 +3,10 @@
 declare( strict_types = 1 );
 namespace WaughJ\WPAdminMenu;
 
-use WaughJ\WPPostListConverter\WPPostListConverter;
+use WaughJ\FlatToHierarchySorter\FlatToHierarchySorter;
+use WaughJ\HTMLAttributeList\HTMLAttributeList;
 use WaughJ\HTMLLink\HTMLLink;
 use WaughJ\TestHashItem\TestHashItem;
-use WaughJ\HTMLAttributeList\HTMLAttributeList;
 
 class WPAdminMenu
 {
@@ -21,9 +21,8 @@ class WPAdminMenu
 			$this->title = $title;
 			$this->attributes = $attributes;
 			$this->skip_to_content_anchor = new SkipToContentAnchor( $attributes[ 'skip-to-content' ] ?? null );
-			$this->post_converter = new WPPostListConverter([ 'type' => 'menu' ]);
-			$this->menu = $this->generateMenu();
 			$this->current_page = null;
+			$this->setupMenuGeneration();
 			$this->setupMenuInAdmin();
 			$this->setCurrentPageBasedOnCurrentPost();
 		}
@@ -57,21 +56,23 @@ class WPAdminMenu
 			return $this->menu;
 		}
 
-		public function findMenuItemByObjectID( array $menu, int $object_id ) : ?int
+		public function findMenuItemByObjectID( array $menu, int $seek_id ) : ?int
 		{
 			foreach( $menu as $item )
 			{
-				if ( $item[ 'object_id' ] === $object_id )
+				if ( $item->getID() === $seek_id )
 				{
-					return $item[ 'id' ];
+					return $item->getID();
 				}
 				$id = null;
-				$subnav = TestHashItem::getArray( $item, 'subnav', false );
-				if ( $subnav )
+				if ( $item->hasChildren() )
 				{
-					$id = $this->findMenuItemByObjectID( $subnav, $object_id );
+					$id = $this->findMenuItemByObjectID( $item->getChildren(), $seek_id );
 				}
-				if ( $id !== null ) { return $id; }
+				if ( $id !== null )
+				{
+					return $id;
+				}
 			}
 			return null;
 		}
@@ -175,9 +176,22 @@ class WPAdminMenu
 				return [];
 			}
 
-		    $object = wp_get_nav_menu_object( $locations[ $this->slug ] );
-		    // Get menu items by menu name
-		    $menu_items = wp_get_nav_menu_items( $object->name, [] );
+			$object = wp_get_nav_menu_object( $locations[ $this->slug ] );
+			
+			if ( !$object )
+			{
+				return [];
+			}
+
+			// Get menu items by menu name
+			$menu_items = [];
+			$ids = get_objects_in_term( $object->term_id, 'nav_menu' );
+			foreach ( $ids as $id )
+			{
+				$post = get_post( $id );
+				$menu_items[] = $post;
+			}
+
 		    // Return menu post objects
 		    return $menu_items;
 		}
@@ -322,9 +336,26 @@ class WPAdminMenu
 			);
 		}
 
-		private function generateMenu() : array
+		private function setupMenuGeneration() : void
 		{
-			return $this->post_converter->getConvertedList( $this->getWordPressMenuData() );
+			add_action( 'init', [ $this, 'generateMenu' ] );
+		}
+
+		public function generateMenu() : void
+		{
+			$this->menu = FlatToHierarchySorter::sort( $this->convertIDsToMenuObjects( $this->getWordPressMenuData() ) );
+		}
+
+		private function convertIDsToMenuObjects( array $in ) : array
+		{
+			return array_map
+			(
+				function( $item )
+				{
+					return new WPAdminMenuItem( intval( $item->ID ) );
+				},
+				$in
+			);
 		}
 
 		private $slug;

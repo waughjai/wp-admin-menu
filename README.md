@@ -11,6 +11,10 @@ Template for automatically creating link menu based on menu in WordPress’s Men
 
 ## Changelog
 
+### 0.8.0
+* Fix bugs when using custom taxonomy links
+* Replace specific and complex WPPostConverter with simpler and more focused FlatToHierarchySorter
+
 ### 0.7.0
 * Add ability to automatically set current page
 * Optimize menu use so that it only runs the list converter once @ initialization

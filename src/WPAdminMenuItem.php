@@ -43,13 +43,17 @@ class WPAdminMenuItem extends HierarchicalNode
                 }
             }
             break;
+            case ( 'custom' ):
+            {
+                $this->url = ( string )( get_post_meta( $id, '_menu_item_url', true ) );
+            }
+            break;
             default:
             {
                 throw "Invalid Object Type for WPAdminMenuItem: {$object_type}";
             }
             break;
         }
-
         $parent = intval( get_post_meta( $id, '_menu_item_menu_item_parent', true ) );
         parent::__construct( $id, $parent );
     }
@@ -64,10 +68,10 @@ class WPAdminMenuItem extends HierarchicalNode
         return $this->title;
     }
 
-    private static function getObjectType( int $id ) : ?string
+    private static function getObjectType( int $id ) : string
     {
-        $type = get_post_meta( $id, '_menu_item_type', true );
-        return ( $type === 'post_type' ) ? 'post' : ( ( $type === 'taxonomy' ) ? 'term' : null );
+        $type = ( string )( get_post_meta( $id, '_menu_item_type', true ) );
+        return ( $type === 'post_type' ) ? 'post' : ( ( $type === 'taxonomy' ) ? 'term' : $type );
     }
 
     private $url;

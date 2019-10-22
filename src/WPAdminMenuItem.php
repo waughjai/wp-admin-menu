@@ -12,6 +12,7 @@ class WPAdminMenuItem extends HierarchicalNode
         $menu_item = get_post( $id );
         $this->title = ( string )( $menu_item->post_title );
         $this->url = '#';
+        $this->order = intval( $menu_item->menu_order );
 
         $object_id = intval( get_post_meta( $id, '_menu_item_object_id', true ) );
         $object_type = self::getObjectType( $id );
@@ -68,6 +69,11 @@ class WPAdminMenuItem extends HierarchicalNode
         return $this->title;
     }
 
+    public function getOrder() : int
+    {
+        return $this->order;
+    }
+
     private static function getObjectType( int $id ) : string
     {
         $type = ( string )( get_post_meta( $id, '_menu_item_type', true ) );
@@ -76,4 +82,5 @@ class WPAdminMenuItem extends HierarchicalNode
 
     private $url;
     private $title;
+    private $order;
 }

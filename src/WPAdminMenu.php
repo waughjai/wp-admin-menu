@@ -344,6 +344,24 @@ class WPAdminMenu
 		public function generateMenu() : void
 		{
 			$this->menu = FlatToHierarchySorter::sort( $this->convertIDsToMenuObjects( $this->getWordPressMenuData() ) );
+			self::sortHierarchyByMenuOrder( $this->menu );
+		}
+
+		private function sortHierarchyByMenuOrder( array &$list ) : void
+		{
+			usort( $list, [ self::class, 'sortByMenuOrder' ] );
+			foreach ( $list as $item )
+			{
+				if ( $item->hasChildren() )
+				{
+					self::sortHierarchyByMenuOrder( $item->getChildren() );
+				}
+			}
+		}
+
+		private function sortByMenuOrder( WPAdminMenuItem $a, WPAdminMenuItem $b ) : int
+		{
+			return ( $a->getOrder() === $b->getOrder() ) ? 0 : ( ( $a->getOrder() < $b->getOrder() ) ? -1 : 1 );
 		}
 
 		private function convertIDsToMenuObjects( array $in ) : array

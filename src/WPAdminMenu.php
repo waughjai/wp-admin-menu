@@ -107,35 +107,35 @@ class WPAdminMenu
 			?></ul><?php
 		}
 
-		private function printMenuItem( array $menu_item, string $item_key, string $link_key, array $attributes_list ) : void
+		private function printMenuItem( WPAdminMenuItem $menu_item, string $item_key, string $link_key, array $attributes_list ) : void
 		{
 			$classes = $this->getElementAttribute( $item_key, 'class', $attributes_list );
-			if ( $menu_item[ 'id' ] === $this->current_page )
+			if ( $this->testIsMenuItemCurrentPage( $menu_item ) )
 			{
 				$classes = array_merge( $classes, $this->getElementAttribute( 'current-item', 'class', $attributes_list ) );
 			}
 			$class_string = implode( ' ', $classes );
 			?><li<?= ( $class_string === '' ) ? '' : " class=\"{$class_string}\""; ?>><?php
 				$this->printMenuLink( $menu_item, $link_key, $attributes_list );
-				if ( $this->testMenuItemHasChildren( $menu_item ) )
+				if ( $menu_item->hasChildren() )
 				{
-					$this->printMenuList( $menu_item[ 'subnav' ], $attributes_list, 'sublist', 'subitem', 'sublink', false );
+					$this->printMenuList( $menu_item->getChildren(), $attributes_list, 'sublist', 'subitem', 'sublink', false );
 				}
 			?></li><?php
 		}
 
-		private function printMenuLink( array $menu_item, string $link_key, array $attributes_list ) : void
+		private function printMenuLink( WPAdminMenuItem $menu_item, string $link_key, array $attributes_list ) : void
 		{
 			$classes = $this->getElementAttribute( $link_key, 'class', $attributes_list );
 
 			// Add "link-parent" class if parent o' submenu.
-			if ( $this->testMenuItemHasChildren( $menu_item ) )
+			if ( $menu_item->hasChildren() )
 			{
 				$classes = array_merge( $classes, $this->getElementAttribute( 'link-parent', 'class', $attributes_list ) );
 			}
 
 			// Add "current-link" class if link goes to current page.
-			if ( $menu_item[ 'id' ] === $this->current_page )
+			if ( $this->testIsMenuItemCurrentPage( $menu_item ) )
 			{
 				$classes = array_merge( $classes, $this->getElementAttribute( 'current-link', 'class', $attributes_list ) );
 			}
@@ -144,10 +144,10 @@ class WPAdminMenu
 			// Only add class attribute if there are any classes.
 			$other_attributes = ( $class_string === '' ) ? [] : [ 'class' => $class_string ];
 
-			$dont_show_current_page_link_condition = TestHashItem::isTrue( $attributes_list, 'dont-show-current-link' ) && $this->current_page === $menu_item[ 'id' ];
+			$dont_show_current_page_link_condition = TestHashItem::isTrue( $attributes_list, 'dont-show-current-link' ) && $this->current_page === $menu_item->getID();
 			echo ( $dont_show_current_page_link_condition )
-				? $menu_item[ 'title' ] // Title without link
-				: new HTMLLink( $menu_item[ 'url' ], $menu_item[ 'title' ], $other_attributes );
+				? $menu_item->getTitle() // Title without link
+				: new HTMLLink( $menu_item->getURL(), $menu_item->getTitle(), $other_attributes );
 		}
 
 		// Skip to Content Item holds a link that goes to the main content anchor,
@@ -245,11 +245,6 @@ class WPAdminMenu
 			}
 
 			return [];
-		}
-
-		private function testMenuItemHasChildren( array $menu_item ) : bool
-		{
-			return isset( $menu_item[ 'subnav' ] );
 		}
 
 		private function getThemeName() : string
@@ -374,6 +369,11 @@ class WPAdminMenu
 				},
 				$in
 			);
+		}
+
+		private function testIsMenuItemCurrentPage( WPAdminMenuItem $menu_item ) : bool
+		{
+			return $menu_item->getID() === $this->current_page;
 		}
 
 		private $slug;

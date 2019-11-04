@@ -10,6 +10,7 @@ class WPAdminMenuItem extends HierarchicalNode
     public function __construct( int $id )
     {
         $menu_item = get_post( $id );
+        $this->id = intval( $id );
         $this->title = ( string )( $menu_item->post_title );
         $this->url = '#';
         $this->order = intval( $menu_item->menu_order );
@@ -59,6 +60,11 @@ class WPAdminMenuItem extends HierarchicalNode
         parent::__construct( $id, $parent );
     }
 
+    public function getID() : int
+    {
+        return $this->id;
+    }
+
     public function getUrl() : string
     {
         return $this->url;
@@ -80,6 +86,7 @@ class WPAdminMenuItem extends HierarchicalNode
         return ( $type === 'post_type' ) ? 'post' : ( ( $type === 'taxonomy' ) ? 'term' : $type );
     }
 
+    private $id;
     private $url;
     private $title;
     private $order;

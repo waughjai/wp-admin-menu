@@ -11,6 +11,9 @@ Template for automatically creating link menu based on menu in WordPress’s Men
 
 ## Changelog
 
+### 0.8.3
+* Fix printing methods to work with new WPAdminMenuItem class
+
 ### 0.8.2
 * Make menus are sorted based on menu order
 

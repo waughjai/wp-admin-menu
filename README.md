@@ -11,6 +11,9 @@ Template for automatically creating link menu based on menu in WordPress’s Men
 
 ## Changelog
 
+### 0.9.0
+* Add special exceptions for errors & add ability to pass in custom error handler
+
 ### 0.8.3
 * Fix printing methods to work with new WPAdminMenuItem class
 

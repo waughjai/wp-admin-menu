@@ -15,13 +15,14 @@ class WPAdminMenu
 	//
 	/////////////////////////////////////////////////////////
 
-		public function __construct( string $slug, string $title, array $attributes = [] )
+		public function __construct( string $slug, string $title, array $attributes = [], ?callable $error_handler = null )
 		{
 			$this->slug = $slug;
 			$this->title = $title;
 			$this->attributes = $attributes;
 			$this->skip_to_content_anchor = new SkipToContentAnchor( $attributes[ 'skip-to-content' ] ?? null );
 			$this->current_page = null;
+			$this->error_handler = ( $error_handler === null ) ? function( WPAdminMenuException $e ) { throw $e; } : $error_handler;
 			$this->setupMenuGeneration();
 			$this->setupMenuInAdmin();
 			$this->setCurrentPageBasedOnCurrentPost();
@@ -338,8 +339,15 @@ class WPAdminMenu
 
 		public function generateMenu() : void
 		{
-			$this->menu = FlatToHierarchySorter::sort( $this->convertIDsToMenuObjects( $this->getWordPressMenuData() ) );
-			self::sortHierarchyByMenuOrder( $this->menu );
+			try
+			{
+				$this->menu = FlatToHierarchySorter::sort( $this->convertIDsToMenuObjects( $this->getWordPressMenuData() ) );
+				self::sortHierarchyByMenuOrder( $this->menu );
+			}
+			catch ( WPAdminMenuException $e )
+			{
+				( $this->error_handler )( $e );
+			}
 		}
 
 		private function sortHierarchyByMenuOrder( array &$list ) : void
@@ -383,4 +391,5 @@ class WPAdminMenu
 		private $post_converter;
 		private $menu;
 		private $current_page;
+		private $error_handler;
 }

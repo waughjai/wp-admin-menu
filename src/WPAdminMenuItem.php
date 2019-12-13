@@ -29,6 +29,7 @@ class WPAdminMenuItem extends HierarchicalNode
                 }
             }
             break;
+
             case ( 'term' ):
             {
                 $term_type = get_post_meta( $id, '_menu_item_object', true );
@@ -36,7 +37,7 @@ class WPAdminMenuItem extends HierarchicalNode
                 $url = get_term_link( $term );
                 if ( is_wp_error( $url ) )
                 {
-                    throw "Invalid term for WPAdminMenuItem with ID ${$id}";
+                    throw new InvalidTermException( $id );
                 }
                 $this->url = ( string )( $url );
                 if ( $this->title === '' )
@@ -45,14 +46,16 @@ class WPAdminMenuItem extends HierarchicalNode
                 }
             }
             break;
+
             case ( 'custom' ):
             {
                 $this->url = ( string )( get_post_meta( $id, '_menu_item_url', true ) );
             }
             break;
+
             default:
             {
-                throw "Invalid Object Type for WPAdminMenuItem: {$object_type}";
+                throw new InvalidObjectTypeException( $object_type );
             }
             break;
         }

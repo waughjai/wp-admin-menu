@@ -11,6 +11,9 @@ Template for automatically creating link menu based on menu in WordPress’s Men
 
 ## Changelog
 
+### 0.9.1
+* Make work with post type archives
+
 ### 0.9.0
 * Add special exceptions for errors & add ability to pass in custom error handler
 

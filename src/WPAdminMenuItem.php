@@ -47,6 +47,21 @@ class WPAdminMenuItem extends HierarchicalNode
             }
             break;
 
+            case ( 'post_type_archive' ):
+            {
+                $type_name = get_post_meta( $id, '_menu_item_object', true );
+                $type_object = get_post_type_object( $type_name );
+                if ( $type_object !== null )
+                {
+                    $this->url = ( string )( get_post_type_archive_link( $type_name ) );
+                    if ( $this->title === '' )
+                    {
+                        $this->title = ( string )( $type_object->label );
+                    }
+                }
+            }
+            break;
+
             case ( 'custom' ):
             {
                 $this->url = ( string )( get_post_meta( $id, '_menu_item_url', true ) );
